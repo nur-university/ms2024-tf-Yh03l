@@ -40,7 +40,15 @@ El propósito principal es proporcionar una plataforma robusta y escalable que p
 
 ## Diagrama de Clases del Dominio
 
-[Insertar el diagrama de clases aquí]
+<p align="center">
+  <img src="public/img/Diagrama MSComercial.jpg" alt="Diagrama de Dominio" width="800"/>
+</p>
+
+## Base de Datos
+
+<p align="center">
+  <img src="public/img/Diagrama_bd.jpg" alt="Diagrama de Base de Datos" width="800"/>
+</p>
 
 El diagrama muestra la estructura central del dominio, incluyendo:
 - Agregados principales (Usuario, Catálogo, Contrato)

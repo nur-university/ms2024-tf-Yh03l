@@ -4,73 +4,17 @@ declare(strict_types=1);
 
 namespace Commercial\Domain\Aggregates\User;
 
-use Commercial\Domain\Events\UserCreated;
-use Commercial\Domain\Events\UserUpdated;
 use Commercial\Domain\ValueObjects\Email;
 
-class User
+abstract class User
 {
-    private string $id;
-    private string $nombre;
-    private string $apellido;
-    private Email $email;
-    private string $tipo_usuario_id;
-    private string $estado;
-    private array $events = [];
-
-    private function __construct(
-        string $id,
-        string $nombre,
-        string $apellido,
-        Email $email,
-        string $tipo_usuario_id,
-        string $estado
-    ) {
-        $this->id = $id;
-        $this->nombre = $nombre;
-        $this->apellido = $apellido;
-        $this->email = $email;
-        $this->tipo_usuario_id = $tipo_usuario_id;
-        $this->estado = $estado;
-    }
-
-    public static function create(
-        string $id,
-        string $nombre,
-        string $apellido,
-        Email $email,
-        string $tipo_usuario_id
-    ): self {
-        $user = new self(
-            $id,
-            $nombre,
-            $apellido,
-            $email,
-            $tipo_usuario_id,
-            'ACTIVO'
-        );
-
-        $user->addEvent(new UserCreated($id, $email->getValue()));
-        return $user;
-    }
-
-    public function actualizarDatos(
-        string $nombre,
-        string $apellido,
-        Email $email
-    ): void {
-        $this->nombre = $nombre;
-        $this->apellido = $apellido;
-        $this->email = $email;
-
-        $this->addEvent(new UserUpdated($this->id));
-    }
-
-    public function validarCredenciales(): bool
-    {
-        // Aquí iría la lógica de validación de credenciales
-        return true;
-    }
+    public function __construct(
+        private readonly string $id,
+        private string $nombre,
+        private string $apellido,
+        private Email $email,
+        private string $estado
+    ) {}
 
     public function getId(): string
     {
@@ -92,28 +36,26 @@ class User
         return $this->email;
     }
 
-    public function getTipoUsuarioId(): string
-    {
-        return $this->tipo_usuario_id;
-    }
-
     public function getEstado(): string
     {
         return $this->estado;
     }
 
-    private function addEvent(object $event): void
+    public function updateInformation(string $nombre, string $apellido): void
     {
-        $this->events[] = $event;
+        $this->nombre = $nombre;
+        $this->apellido = $apellido;
     }
 
-    public function getEvents(): array
+    public function updateEmail(Email $email): void
     {
-        return $this->events;
+        $this->email = $email;
     }
 
-    public function clearEvents(): void
+    public function updateEstado(string $estado): void
     {
-        $this->events = [];
+        $this->estado = $estado;
     }
+
+    abstract public function getTipoUsuario(): string;
 } 

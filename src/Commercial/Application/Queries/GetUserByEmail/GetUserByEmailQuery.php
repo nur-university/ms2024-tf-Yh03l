@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Commercial\Application\Queries\GetUserByEmail;
 
-class GetUserByEmailQuery
+use Commercial\Domain\ValueObjects\Email;
+
+final class GetUserByEmailQuery
 {
-    private string $email;
+    private readonly Email $email;
 
     public function __construct(string $email)
     {
-        $this->email = $email;
+        $this->email = Email::fromString($email);
     }
 
-    public function getEmail(): string
+    public function getEmail(): Email
     {
         return $this->email;
     }

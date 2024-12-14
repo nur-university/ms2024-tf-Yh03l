@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace Commercial\Domain\ValueObjects;
 
-class Email
+final class Email
 {
-    private string $value;
-
-    public function __construct(string $value)
-    {
+    private function __construct(
+        private readonly string $value
+    ) {
         $this->validate($value);
-        $this->value = $value;
+    }
+
+    public static function fromString(string $value): self
+    {
+        return new self($value);
     }
 
     private function validate(string $email): void
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('Email inválido');
+            throw new \InvalidArgumentException('Email inválido: ' . $email);
         }
     }
 
@@ -26,8 +29,13 @@ class Email
         return $this->value;
     }
 
-    public function equals(Email $other): bool
+    public function equals(self $other): bool
     {
         return $this->value === $other->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 } 

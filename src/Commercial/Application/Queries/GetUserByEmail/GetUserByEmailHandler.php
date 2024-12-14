@@ -7,14 +7,11 @@ namespace Commercial\Application\Queries\GetUserByEmail;
 use Commercial\Domain\Repositories\UserRepository;
 use Commercial\Application\DTOs\UserDTO;
 
-class GetUserByEmailHandler
+final class GetUserByEmailHandler
 {
-    private UserRepository $repository;
-
-    public function __construct(UserRepository $repository)
-    {
-        $this->repository = $repository;
-    }
+    public function __construct(
+        private readonly UserRepository $repository
+    ) {}
 
     public function __invoke(GetUserByEmailQuery $query): ?UserDTO
     {
@@ -29,13 +26,6 @@ class GetUserByEmailHandler
             return null;
         }
 
-        return new UserDTO(
-            $user->getId(),
-            $user->getNombre(),
-            $user->getApellido(),
-            $user->getEmail()->getValue(),
-            $user->getTipoUsuarioId(),
-            $user->getEstado()
-        );
+        return UserDTO::fromEntity($user);
     }
 } 
