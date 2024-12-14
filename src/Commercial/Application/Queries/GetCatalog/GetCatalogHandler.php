@@ -6,28 +6,27 @@ namespace Commercial\Application\Queries\GetCatalog;
 
 use Commercial\Domain\Repositories\CatalogRepository;
 use Commercial\Application\DTOs\CatalogDTO;
+use Commercial\Domain\Exceptions\CatalogException;
 
-class GetCatalogHandler
+final class GetCatalogHandler
 {
-    private CatalogRepository $repository;
+    public function __construct(
+        private readonly CatalogRepository $catalogRepository
+    ) {}
 
-    public function __construct(CatalogRepository $repository)
+    public function __invoke(GetCatalogQuery $query): CatalogDTO
     {
-        $this->repository = $repository;
-    }
-
-    public function __invoke(GetCatalogQuery $query): ?CatalogDTO
-    {
-        $catalog = $this->repository->findById($query->getId());
+        $catalog = $this->catalogRepository->findById($query->id);
 
         if (!$catalog) {
-            return null;
+            throw CatalogException::notFound($query->id);
         }
 
-        return new CatalogDTO(
-            $catalog->getId(),
-            $catalog->getEstado(),
-            $catalog->getServices()
-        );
+        return CatalogDTO::fromEntity($catalog);
+    }
+
+    public function handle(GetCatalogQuery $query): CatalogDTO
+    {
+        return $this->__invoke($query);
     }
 } 

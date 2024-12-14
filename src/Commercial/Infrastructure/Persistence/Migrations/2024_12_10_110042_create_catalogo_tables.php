@@ -14,6 +14,7 @@ return new class extends Migration
         // Tabla para catálogos
         Schema::create('catalogos', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('nombre')->index();
             $table->string('estado')->default('activo');
             $table->timestamps();
             $table->softDeletes();

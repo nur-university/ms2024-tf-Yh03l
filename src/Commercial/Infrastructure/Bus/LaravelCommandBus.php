@@ -27,4 +27,4 @@ class LaravelCommandBus implements CommandBus
         $handlerClass = str_replace('\\Handlers\\', '\\Commands\\', $handlerClass);
         return $this->container->make($handlerClass);
     }
-} 
+}

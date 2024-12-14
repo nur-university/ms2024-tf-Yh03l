@@ -4,40 +4,31 @@ declare(strict_types=1);
 
 namespace Commercial\Application\DTOs;
 
-class CatalogDTO
+use Commercial\Domain\Aggregates\Catalog\Catalog;
+use Commercial\Domain\ValueObjects\ServiceStatus;
+
+final class CatalogDTO
 {
-    private string $id;
-    private string $estado;
-    private array $services;
+    /**
+     * @param ServiceDTO[] $services
+     */
+    public function __construct(
+        public readonly string $id,
+        public readonly string $nombre,
+        public readonly ServiceStatus $estado,
+        public readonly array $services = []
+    ) {}
 
-    public function __construct(string $id, string $estado, array $services)
+    public static function fromEntity(Catalog $catalog): self
     {
-        $this->id = $id;
-        $this->estado = $estado;
-        $this->services = $services;
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getEstado(): string
-    {
-        return $this->estado;
-    }
-
-    public function getServices(): array
-    {
-        return $this->services;
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'estado' => $this->estado,
-            'services' => $this->services
-        ];
+        return new self(
+            id: $catalog->getId(),
+            nombre: $catalog->getNombre(),
+            estado: $catalog->getEstado(),
+            services: array_map(
+                fn($service) => ServiceDTO::fromEntity($service),
+                $catalog->getServices()
+            )
+        );
     }
 } 

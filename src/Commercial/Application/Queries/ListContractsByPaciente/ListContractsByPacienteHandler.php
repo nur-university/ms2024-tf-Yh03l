@@ -19,6 +19,14 @@ class ListContractsByPacienteHandler
     /**
      * @return ContractDTO[]
      */
+    public function __invoke(ListContractsByPacienteQuery $query): array
+    {
+        return $this->handle($query);
+    }
+
+    /**
+     * @return ContractDTO[]
+     */
     public function handle(ListContractsByPacienteQuery $query): array
     {
         $contracts = $this->repository->findByPacienteId($query->getPacienteId());

@@ -26,4 +26,4 @@ class LaravelQueryBus implements QueryBus
         $handlerClass = str_replace('Query', 'Handler', get_class($query));
         return $this->container->make($handlerClass);
     }
-} 
+}

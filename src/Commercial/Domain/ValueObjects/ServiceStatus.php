@@ -6,36 +6,22 @@ namespace Commercial\Domain\ValueObjects;
 
 enum ServiceStatus: string
 {
-    case ACTIVE = 'active';
-    case INACTIVE = 'inactive';
-    case DISCONTINUED = 'discontinued';
+    case ACTIVO = 'activo';
+    case INACTIVO = 'inactivo';
+    case SUSPENDIDO = 'suspendido';
 
-    public function isActive(): bool
+    public static function fromString(string $value): self
     {
-        return $this === self::ACTIVE;
-    }
-
-    public function canBeModified(): bool
-    {
-        return $this !== self::DISCONTINUED;
-    }
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::ACTIVE => 'Activo',
-            self::INACTIVE => 'Inactivo',
-            self::DISCONTINUED => 'Descontinuado'
+        return match (strtolower($value)) {
+            'activo' => self::ACTIVO,
+            'inactivo' => self::INACTIVO,
+            'suspendido' => self::SUSPENDIDO,
+            default => throw new \InvalidArgumentException('Estado de catálogo inválido')
         };
     }
 
-    public static function fromString(string $status): self
+    public function toString(): string
     {
-        return match ($status) {
-            'active', 'activo' => self::ACTIVE,
-            'inactive', 'inactivo' => self::INACTIVE,
-            'discontinued', 'descontinuado' => self::DISCONTINUED,
-            default => throw new \InvalidArgumentException("Estado de servicio inválido: {$status}")
-        };
+        return $this->value;
     }
 }

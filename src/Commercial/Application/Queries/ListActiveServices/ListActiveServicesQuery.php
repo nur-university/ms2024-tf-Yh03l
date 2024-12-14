@@ -7,6 +7,11 @@ namespace Commercial\Application\Queries\ListActiveServices;
 final class ListActiveServicesQuery
 {
     public function __construct(
-        public readonly ?string $catalogId = null
+        private readonly ?string $catalogId = null
     ) {}
+
+    public function getCatalogId(): ?string
+    {
+        return $this->catalogId;
+    }
 }

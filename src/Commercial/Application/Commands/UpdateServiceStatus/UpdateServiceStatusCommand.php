@@ -9,7 +9,17 @@ use Commercial\Domain\ValueObjects\ServiceStatus;
 final class UpdateServiceStatusCommand
 {
     public function __construct(
-        public readonly string $serviceId,
-        public readonly ServiceStatus $status
+        private readonly string $id,
+        private readonly ServiceStatus $estado
     ) {}
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getEstado(): ServiceStatus
+    {
+        return $this->estado;
+    }
 }

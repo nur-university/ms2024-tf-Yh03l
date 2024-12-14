@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Commercial\Application\Commands\CreateCatalog;
 
-class CreateCatalogCommand
-{
-    private string $estado;
+use Commercial\Domain\ValueObjects\ServiceStatus;
 
-    public function __construct(string $estado)
+final class CreateCatalogCommand
+{
+    public function __construct(
+        private readonly string $nombre,
+        private readonly ServiceStatus $estado
+    ) {}
+
+    public function getNombre(): string
     {
-        $this->estado = $estado;
+        return $this->nombre;
     }
 
-    public function getEstado(): string
+    public function getEstado(): ServiceStatus
     {
         return $this->estado;
     }

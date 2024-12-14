@@ -16,6 +16,11 @@ class GetUserByEmailHandler
         $this->repository = $repository;
     }
 
+    public function __invoke(GetUserByEmailQuery $query): ?UserDTO
+    {
+        return $this->handle($query);
+    }
+
     public function handle(GetUserByEmailQuery $query): ?UserDTO
     {
         $user = $this->repository->findByEmail($query->getEmail());

@@ -6,26 +6,20 @@ namespace Commercial\Infrastructure\EventBus;
 
 class InMemoryEventBus implements EventBus
 {
-    private array $handlers = [];
+    private array $events = [];
 
     public function publish(object $event): void
     {
-        $eventClass = get_class($event);
-        if (!isset($this->handlers[$eventClass])) {
-            return;
-        }
-
-        foreach ($this->handlers[$eventClass] as $handler) {
-            $handler($event);
-        }
+        $this->events[] = $event;
     }
 
-    public function subscribe(string $eventClass, callable $handler): void
+    public function getEvents(): array
     {
-        if (!isset($this->handlers[$eventClass])) {
-            $this->handlers[$eventClass] = [];
-        }
+        return $this->events;
+    }
 
-        $this->handlers[$eventClass][] = $handler;
+    public function clearEvents(): void
+    {
+        $this->events = [];
     }
 } 

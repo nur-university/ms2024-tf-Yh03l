@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace Commercial\Application\Queries\ListCatalogs;
 
-class ListCatalogsQuery
+final class ListCatalogsQuery
 {
-    // Esta consulta no necesita parámetros ya que lista todos los catálogos
+    public function __construct(
+        private readonly ?string $estado = null
+    ) {}
+
+    public function getEstado(): ?string
+    {
+        return $this->estado;
+    }
 } 

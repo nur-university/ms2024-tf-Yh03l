@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 namespace Commercial\Application\Commands\UpdateServiceStatus;
 
-use Commercial\Domain\Repositories\CatalogRepository;
+use Commercial\Domain\Repositories\ServiceRepository;
 use Commercial\Domain\Exceptions\CatalogException;
 
 final class UpdateServiceStatusHandler
 {
     public function __construct(
-        private readonly CatalogRepository $catalogRepository
+        private readonly ServiceRepository $serviceRepository
     ) {}
+
+    public function __invoke(UpdateServiceStatusCommand $command): void
+    {
+        $service = $this->serviceRepository->findById($command->getId());
+
+        if (!$service) {
+            throw CatalogException::serviceNotFound($command->getId());
+        }
+
+        $service->updateEstado($command->getEstado());
+        $this->serviceRepository->save($service);
+    }
 
     public function handle(UpdateServiceStatusCommand $command): void
     {
-        $service = $this->catalogRepository->findServiceById($command->serviceId);
-
-        if (!$service) {
-            throw CatalogException::serviceNotFound($command->serviceId);
-        }
-
-        if (!$service->canUpdateStatus($command->status)) {
-            throw CatalogException::invalidStatusTransition($service->status, $command->status);
-        }
-
-        $service->updateStatus($command->status);
-
-        $this->catalogRepository->save($service);
+        $this->__invoke($command);
     }
 }

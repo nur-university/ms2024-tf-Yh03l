@@ -4,28 +4,19 @@ declare(strict_types=1);
 
 namespace Commercial\Api\Requests;
 
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class CreateCatalogRequest extends Request
+class CreateCatalogRequest extends FormRequest
 {
-    private string $estado = 'activo';
+    public function authorize(): bool
+    {
+        return true;
+    }
 
     public function rules(): array
     {
         return [
-            'estado' => 'string|in:activo,inactivo'
+            'nombre' => ['required', 'string', 'max:255'],
         ];
-    }
-
-    public function getEstado(): string
-    {
-        return $this->estado;
-    }
-
-    protected function prepareForValidation(): void
-    {
-        if ($this->has('estado')) {
-            $this->estado = $this->input('estado');
-        }
     }
 } 

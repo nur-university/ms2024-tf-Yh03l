@@ -4,82 +4,61 @@ declare(strict_types=1);
 
 namespace Commercial\Domain\Aggregates\Catalog;
 
-use Commercial\Domain\ValueObjects\ServiceCost;
-use Commercial\Domain\Events\CatalogCreated;
+use Commercial\Domain\ValueObjects\ServiceStatus;
+use Commercial\Domain\Exceptions\CatalogException;
 use Commercial\Domain\Events\ServiceAdded;
 use Commercial\Domain\Events\ServiceRemoved;
 
 class Catalog
 {
-    private string $id;
-    private array $services;
-    private string $estado;
+    private array $services = [];
     private array $events = [];
 
-    private function __construct(string $id, string $estado)
+    private function __construct(
+        private string $id,
+        private string $nombre,
+        private ServiceStatus $estado
+    ) {}
+
+    public static function create(string $id, string $nombre, ServiceStatus $estado): self
     {
-        $this->id = $id;
-        $this->services = [];
-        $this->estado = $estado;
+        return new self($id, $nombre, $estado);
     }
 
-    public static function create(string $id, string $estado): self
+    public function addService(Service $service): void
     {
-        $catalog = new self($id, $estado);
-        $catalog->addEvent(new CatalogCreated($id));
-        return $catalog;
-    }
-
-    public function agregarServicio(Service $service): void
-    {
-        if ($this->hasService($service->getId())) {
-            throw new \DomainException('El servicio ya existe en el catálogo');
+        if (isset($this->services[$service->getId()])) {
+            throw CatalogException::serviceAlreadyExists($service->getId());
         }
-
+        $this->services[$service->getId()] = $service;
         $this->services[] = $service;
         $this->addEvent(new ServiceAdded($this->id, $service->getId()));
     }
 
-    public function removerServicio(string $serviceId): void
+    public function removeService(string $serviceId): void
     {
-        if (!$this->hasService($serviceId)) {
-            throw new \DomainException('El servicio no existe en el catálogo');
+        if (!isset($this->services[$serviceId])) {
+            throw CatalogException::serviceNotFound($serviceId);
         }
-
-        $this->services = array_filter(
-            $this->services,
-            fn($service) => $service->getId() !== $serviceId
-        );
-
-        $this->addEvent(new ServiceRemoved($this->id, $serviceId));
+        unset($this->services[$serviceId]);
     }
 
-    public function actualizarCatalogo(string $estado): void
+    public function updateService(Service $service): void
     {
-        $this->estado = $estado;
+        if (!isset($this->services[$service->getId()])) {
+            throw CatalogException::serviceNotFound($service->getId());
+        }
+        $this->services[$service->getId()] = $service;
     }
 
-    private function hasService(string $serviceId): bool
+    public function getService(string $serviceId): ?Service
     {
-        return !empty(array_filter(
-            $this->services,
-            fn($service) => $service->getId() === $serviceId
-        ));
+        return $this->services[$serviceId] ?? null;
     }
 
-    private function addEvent(object $event): void
+    public function getServices(): array
     {
-        $this->events[] = $event;
-    }
-
-    public function getEvents(): array
-    {
-        return $this->events;
-    }
-
-    public function clearEvents(): void
-    {
-        $this->events = [];
+        return array_values($this->services);
     }
 
     public function getId(): string
@@ -87,26 +66,68 @@ class Catalog
         return $this->id;
     }
 
-    public function getEstado(): string
+    public function getNombre(): string
+    {
+        return $this->nombre;
+    }
+
+    public function getEstado(): ServiceStatus
     {
         return $this->estado;
     }
 
-    public function getServices(): array
+    public function updateEstado(ServiceStatus $estado): void
     {
-        return array_map(function(Service $service) {
-            return [
-                'id' => $service->getId(),
-                'nombre' => $service->getNombre(),
-                'descripcion' => $service->getDescripcion(),
-                'costo' => [
-                    'monto' => $service->getCosto()->getMonto(),
-                    'moneda' => $service->getCosto()->getMoneda(),
-                    'vigencia' => $service->getCosto()->getVigencia()->format('Y-m-d')
-                ],
-                'tipo_servicio_id' => $service->getTipoServicioId(),
-                'estado' => $service->getEstado()
-            ];
-        }, $this->services);
+        $this->estado = $estado;
+    }
+
+    public function updateNombre(string $nombre): void
+    {
+        $this->nombre = $nombre;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->estado === ServiceStatus::ACTIVO;
+    }
+
+    public function isInactive(): bool
+    {
+        return $this->estado === ServiceStatus::INACTIVO;
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->estado === ServiceStatus::SUSPENDIDO;
+    }
+
+    public function isActiveOrInactive(): bool
+    {
+        return $this->isActive() || $this->isInactive();
+    }
+
+    public function isActiveOrSuspended(): bool
+    {
+        return $this->isActive() || $this->isSuspended();
+    }
+
+    public function isInactiveOrSuspended(): bool
+    {
+        return $this->isInactive() || $this->isSuspended();
+    }
+
+    public function getEvents(): array
+    {
+        return $this->events;
+    }
+
+    public function addEvent(object $event): void
+    {
+        $this->events[] = $event;
+    }
+
+    public function clearEvents(): void
+    {
+        $this->events = [];
     }
 } 
