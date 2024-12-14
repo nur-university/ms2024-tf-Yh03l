@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Commercial\Application\DTOs;
 
-use DateTimeImmutable;
-
 final class ServiceCostHistoryDTO
 {
     public function __construct(
         private readonly float $monto,
         private readonly string $moneda,
-        private readonly DateTimeImmutable $vigencia,
-        private readonly DateTimeImmutable $createdAt
+        private readonly \DateTimeImmutable $vigencia
     ) {}
 
     public function getMonto(): float
@@ -25,14 +22,9 @@ final class ServiceCostHistoryDTO
         return $this->moneda;
     }
 
-    public function getVigencia(): DateTimeImmutable
+    public function getVigencia(): \DateTimeImmutable
     {
         return $this->vigencia;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
     }
 
     public function toArray(): array
@@ -40,8 +32,7 @@ final class ServiceCostHistoryDTO
         return [
             'monto' => $this->monto,
             'moneda' => $this->moneda,
-            'vigencia' => $this->vigencia->format('Y-m-d H:i:s'),
-            'created_at' => $this->createdAt->format('Y-m-d H:i:s')
+            'vigencia' => $this->vigencia->format('Y-m-d H:i:s')
         ];
     }
 }

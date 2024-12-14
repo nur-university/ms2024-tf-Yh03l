@@ -24,8 +24,8 @@ final class ServiceCost
 
     private function validateMoneda(string $moneda): void
     {
-        if (!in_array($moneda, ['PEN', 'USD'])) {
-            throw new \InvalidArgumentException('Moneda no válida. Use PEN o USD');
+        if (!in_array($moneda, ['BOB', 'USD'])) {
+            throw new \InvalidArgumentException('Moneda no válida. Use BOB o USD');
         }
     }
 

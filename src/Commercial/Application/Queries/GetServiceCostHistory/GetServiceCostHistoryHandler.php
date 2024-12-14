@@ -32,8 +32,7 @@ final class GetServiceCostHistoryHandler
             fn ($cost) => new ServiceCostHistoryDTO(
                 monto: $cost->getMonto(),
                 moneda: $cost->getMoneda(),
-                vigencia: $cost->getVigencia(),
-                createdAt: $cost->getCreatedAt()
+                vigencia: $cost->getVigencia()
             ),
             $costHistory
         );

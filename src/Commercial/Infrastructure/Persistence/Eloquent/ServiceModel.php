@@ -30,10 +30,19 @@ class ServiceModel extends Model
         'catalogo_id'
     ];
 
+    // Especifica las columnas de fecha
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
+    // Define el formato de fecha para la serialización
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime'
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'costo' => 'decimal:2',
+        'deleted_at' => 'datetime:Y-m-d H:i:s'
     ];
 
     public function catalogo(): BelongsTo
@@ -56,9 +65,9 @@ class ServiceModel extends Model
 
         if ($currentCost) {
             return new ServiceCostVO(
-                monto: $currentCost->monto,
+                monto: (float) $currentCost->monto,
                 moneda: $currentCost->moneda,
-                vigencia: new \DateTimeImmutable($currentCost->vigencia)
+                vigencia: new \DateTimeImmutable($currentCost->vigencia->format('Y-m-d H:i:s'))
             );
         }
 
@@ -70,9 +79,9 @@ class ServiceModel extends Model
 
         if ($futureCost) {
             return new ServiceCostVO(
-                monto: $futureCost->monto,
+                monto: (float) $futureCost->monto,
                 moneda: $futureCost->moneda,
-                vigencia: new \DateTimeImmutable($futureCost->vigencia)
+                vigencia: new \DateTimeImmutable($futureCost->vigencia->format('Y-m-d H:i:s'))
             );
         }
 

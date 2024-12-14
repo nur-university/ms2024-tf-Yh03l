@@ -28,9 +28,19 @@ class ServiceCostModel extends Model
 
     protected $casts = [
         'monto' => 'decimal:2',
-        'vigencia' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'vigencia' => 'datetime:Y-m-d H:i:s',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s'
+    ];
+
+    protected $dates = [
+        'vigencia',
+        'created_at',
+        'updated_at'
+    ];
+
+    protected $attributes = [
+        'monto' => '0.00'
     ];
 
     protected static function boot()
@@ -38,6 +48,10 @@ class ServiceCostModel extends Model
         parent::boot();
 
         static::saving(function ($model) {
+            if (!is_numeric($model->monto)) {
+                throw new \InvalidArgumentException('El monto debe ser un número');
+            }
+            
             if ($model->vigencia < Carbon::now()) {
                 throw new \InvalidArgumentException('La fecha de vigencia no puede ser anterior a la fecha actual');
             }

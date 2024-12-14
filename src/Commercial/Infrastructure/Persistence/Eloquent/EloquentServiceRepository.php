@@ -97,9 +97,9 @@ class EloquentServiceRepository implements ServiceRepository
 
         return $costModels->map(function ($costModel) {
             return new ServiceCost(
-                monto: $costModel->monto,
+                monto: (float) $costModel->monto,
                 moneda: $costModel->moneda,
-                vigencia: new \DateTimeImmutable($costModel->vigencia)
+                vigencia: new \DateTimeImmutable($costModel->vigencia->format('Y-m-d H:i:s'))
             );
         })->all();
     }
@@ -115,14 +115,18 @@ class EloquentServiceRepository implements ServiceRepository
             $currentCost = $model->costos()->latest('vigencia')->first();
         }
 
+        if (!$currentCost) {
+            throw new \RuntimeException("No se encontró información de costo para el servicio {$model->id}");
+        }
+
         return new Service(
             id: $model->id,
             nombre: $model->nombre,
             descripcion: $model->descripcion,
             costo: new ServiceCost(
-                monto: $currentCost->monto,
+                monto: (float) $currentCost->monto,
                 moneda: $currentCost->moneda,
-                vigencia: new \DateTimeImmutable($currentCost->vigencia)
+                vigencia: new \DateTimeImmutable($currentCost->vigencia->format('Y-m-d H:i:s'))
             ),
             tipo_servicio_id: $model->tipo_servicio_id,
             estado: ServiceStatus::fromString($model->estado),

@@ -51,7 +51,7 @@ class AddServiceRequest extends Request
             'nombre' => 'required|string|max:100',
             'descripcion' => 'required|string',
             'costo' => 'required|numeric|min:0',
-            'moneda' => 'required|string|in:PEN,USD',
+            'moneda' => 'required|string|in:BOB,USD',
             'vigencia' => 'required|date',
             'tipo_servicio_id' => 'required|uuid'
         ];
@@ -62,7 +62,7 @@ class AddServiceRequest extends Request
         $this->nombre = $this->input('nombre');
         $this->descripcion = $this->input('descripcion');
         $this->costo = (float) $this->input('costo');
-        $this->moneda = $this->input('moneda', 'PEN');
+        $this->moneda = $this->input('moneda', 'BOB');
         $this->vigencia = new \DateTimeImmutable($this->input('vigencia'));
         $this->tipoServicioId = $this->input('tipo_servicio_id');
     }

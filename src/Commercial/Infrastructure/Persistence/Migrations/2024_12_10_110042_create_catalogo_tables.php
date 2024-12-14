@@ -25,8 +25,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('nombre')->index();
             $table->text('descripcion');
-            $table->decimal('costo', 10, 2);
-            $table->enum('tipo_servicio', ['asesoramiento', 'catering']);
+            $table->decimal('costo', 10, 2)->nullable();
+            $table->enum('tipo_servicio_id', ['asesoramiento', 'catering']);
             $table->enum('estado', ['activo', 'inactivo', 'descontinuado'])->default('activo');
             $table->foreignUuid('catalogo_id')->constrained('catalogos')->onDelete('cascade');
             $table->timestamps();

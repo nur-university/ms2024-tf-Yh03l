@@ -17,7 +17,7 @@ class UpdateServiceCostRequest extends FormRequest
     {
         return [
             'monto' => ['required', 'numeric', 'min:0'],
-            'moneda' => ['required', 'string', 'in:PEN,USD'],
+            'moneda' => ['required', 'string', 'in:BOB,USD'],
             'vigencia' => ['required', 'date', 'after:today'],
         ];
     }

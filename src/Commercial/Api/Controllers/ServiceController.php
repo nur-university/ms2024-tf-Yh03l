@@ -70,13 +70,13 @@ class ServiceController
     {
         try {
             $command = new CreateServiceCommand(
-                nombre: $request->nombre,
-                descripcion: $request->descripcion,
-                monto: (float) $request->monto,
-                moneda: $request->moneda,
-                vigencia: new DateTimeImmutable($request->vigencia),
-                tipo_servicio_id: $request->tipo_servicio_id,
-                catalogo_id: $request->catalogo_id
+                nombre: $request->validated('nombre'),
+                descripcion: $request->validated('descripcion'),
+                monto: (float) $request->validated('monto'),
+                moneda: $request->validated('moneda'),
+                vigencia: new DateTimeImmutable($request->validated('vigencia')),
+                tipo_servicio_id: $request->validated('tipo_servicio_id'),
+                catalogo_id: $request->validated('catalogo_id')
             );
 
             $this->commandBus->dispatch($command);
@@ -97,7 +97,7 @@ class ServiceController
             );
         } catch (\Exception $e) {
             return new JsonResponse(
-                ['error' => 'Error interno al crear el servicio'],
+                ['error' => 'Error interno al crear el servicio', 'message' => $e->getMessage()],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
